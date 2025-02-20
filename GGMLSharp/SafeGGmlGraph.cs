@@ -89,14 +89,14 @@ namespace GGMLSharp
 		public Structs.GGmlStatus ComputeWithGGmlContext(SafeGGmlContext context, int threads)
 		{
 			ThrowIfNotInitialized();
-			return (Structs.GGmlStatus)Native.ggml_graph_compute_with_ctx(context, this, threads);
+			return (Structs.GGmlStatus)NativeCpu.ggml_graph_compute_with_ctx(context, this, threads);
 		}
 
 		public Structs.GGmlStatus Compute(SafeGGmlGraphPlan plan)
 		{
 			ThrowIfNotInitialized();
 			ggml_cplan* p = (ggml_cplan*)plan.DangerousGetHandle();
-			return (Structs.GGmlStatus)Native.ggml_graph_compute(this, p);
+			return (Structs.GGmlStatus)NativeCpu.ggml_graph_compute(this, p);
 		}
 
 		public void BuildForwardExpend(SafeGGmlTensor tensor)
@@ -137,7 +137,7 @@ namespace GGMLSharp
 
 		public SafeGGmlGraphPlan GetPlan(int threads = -1)
 		{
-			ggml_cplan p = Native.ggml_graph_plan(this, threads);
+			ggml_cplan p = NativeCpu.ggml_graph_plan(this, threads);
 			SafeGGmlGraphPlan plan = new SafeGGmlGraphPlan(p);
 			return plan;
 		}

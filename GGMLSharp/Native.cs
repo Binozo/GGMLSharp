@@ -20,7 +20,7 @@ namespace GGMLSharp
 {
     internal unsafe class Native
     {
-		public const string DllName = "ggml";
+		public const string DllName = "ggml-base";
 
         #region ggml.h
 
@@ -206,7 +206,7 @@ namespace GGMLSharp
         public extern static bool ggml_validate_row_data(Structs.GGmlType type, IntPtr data, size_t nbytes);
 
         // main
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("ggml-base", CallingConvention = CallingConvention.Cdecl)]
         public extern static IntPtr ggml_init(ggml_init_params @params);
 
 
@@ -286,30 +286,6 @@ namespace GGMLSharp
         // Converts a flat index into coordinates
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void ggml_unravel_index(SafeGGmlTensor tensor, int64_t i, int64_t* i0, int64_t* i1, int64_t* i2, int64_t* i3);
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static int32_t ggml_get_i32_1d(SafeGGmlTensor tensor, int i);
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static void ggml_set_i32_1d(SafeGGmlTensor tensor, int i, int32_t value);
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static int32_t ggml_get_i32_nd(SafeGGmlTensor tensor, int i0, int i1, int i2, int i3);
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static void ggml_set_i32_nd(SafeGGmlTensor tensor, int i0, int i1, int i2, int i3, int32_t value);
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static float ggml_get_f32_1d(SafeGGmlTensor tensor, int i);
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static void ggml_set_f32_1d(SafeGGmlTensor tensor, int i, float value);
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static float ggml_get_f32_nd(SafeGGmlTensor tensor, int i0, int i1, int i2, int i3);
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static void ggml_set_f32_nd(SafeGGmlTensor tensor, int i0, int i1, int i2, int i3, float value);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void* ggml_get_data(SafeGGmlTensor tensor);
@@ -1310,18 +1286,6 @@ namespace GGMLSharp
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public extern static size_t ggml_graph_overhead_custom(size_t size, bool grads);
 
-        // ggml_graph_plan() has to be called before ggml_graph_compute()
-        // when plan.work_size > 0, caller must allocate memory for plan.work_data
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static ggml_cplan ggml_graph_plan(SafeGGmlGraph cgraph, int n_threads /*= GGML_DEFAULT_N_THREADS*/);
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static ggml_status ggml_graph_compute(SafeGGmlGraph cgraph, ggml_cplan* cplan);
-        // same as ggml_graph_compute() but the work data is allocated as a part of the context
-        // note: the drawback of this API is that you must have ensured that the context has enough memory for the work data
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static ggml_status ggml_graph_compute_with_ctx(SafeGGmlContext ctx, SafeGGmlGraph cgraph, int n_threads);
-
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public extern static SafeGGmlTensor ggml_graph_get_tensor(SafeGGmlGraph cgraph, string name);
 
@@ -1365,11 +1329,11 @@ namespace GGMLSharp
 
         // initialize optimizer context
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-		public extern static void ggml_opt_init(SafeGGmlContext ctx, SafeGGmlOptContext opt, ggml_opt_params @params, int64_t nx);
+		public extern static void ggml_opt_init(SafeGGmlContext ctx, SafeGGmlOptContext opt, Structs.OptimizerParameters @params, int64_t nx);
 
         // continue optimizing the function defined by the tensor f
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-		public extern static ggml_opt_result ggml_opt_resume(SafeGGmlContext ctx, SafeGGmlOptContext opt, SafeGGmlTensor f);
+		public extern static Structs.OptimizationResult ggml_opt_resume(SafeGGmlContext ctx, SafeGGmlOptContext opt, SafeGGmlTensor f);
 
         // continue optimizing the function defined by the tensor f
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
@@ -1905,21 +1869,6 @@ namespace GGMLSharp
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void ggml_backend_event_wait(SafeGGmlBackend backend, ggml_backend_event* @event); // wait async on event
 
-        //
-        // CPU backend
-        //
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static SafeGGmlBackend ggml_backend_cpu_init();
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static bool ggml_backend_is_cpu(SafeGGmlBackend backend);
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static void ggml_backend_cpu_set_n_threads(SafeGGmlBackend backend_cpu, int n_threads);
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static void ggml_backend_cpu_set_abort_callback(SafeGGmlBackend backend_cpu, ggml_abort_callback abort_callback, void* abort_callback_data);
-
         /// <summary>
         /// Create a backend buffer from an existing pointer
         /// </summary>
@@ -2131,20 +2080,6 @@ namespace GGMLSharp
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public extern static size_t ggml_hash_find_or_insert(ggml_hash_set hash_set, SafeGGmlTensor key);
 
-
-        #endregion
-
-        #region ggml-cuda.h
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static SafeGGmlBackend ggml_backend_cuda_init(int device);
-
-        #endregion
-
-        #region ggml-vulkan.h
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public extern static SafeGGmlBackend ggml_backend_vk_init(int device);
 
         #endregion
 

@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Runtime.InteropServices;
 using static GGMLSharp.InternalStructs;
 
 namespace GGMLSharp
@@ -20,35 +20,45 @@ namespace GGMLSharp
 
         public static SafeGGmlBackend CpuInit()
         {
-            return Native.ggml_backend_cpu_init();
+            return NativeCpu.ggml_backend_cpu_init();
         }
 
         public static SafeGGmlBackend CudaInit(int index = 0)
         {
             if (!HasCuda)
             {
-                throw new NotSupportedException("Cuda Not Support");
+                throw new NotSupportedException("Cuda not supported");
             }
-            return Native.ggml_backend_cuda_init(index);
+            return NativeCuda.ggml_backend_cuda_init(index);
         }
 
         public static SafeGGmlBackend VulkanInit(int index = 0)
         {
             if (!HasVulkan)
             {
-                throw new NotSupportedException("Vulkan Not Support");
+                throw new NotSupportedException("Vulkan not supported");
             }
-            return Native.ggml_backend_vk_init(index);
+            return NativeVulkan.ggml_backend_vk_init(index);
         }
 
-        public static bool HasCuda => Native.ggml_cpu_has_cuda();
+        public static bool HasCuda => HasLibrary("ggml-cuda");
 
-        public static bool HasVulkan => Native.ggml_cpu_has_vulkan();
+        public static bool HasVulkan => HasLibrary("ggml-vulkan");
+
+        private static bool HasLibrary(string libraryName)
+        {
+            if (NativeLibrary.TryLoad(libraryName, out IntPtr handle))
+            {
+                NativeLibrary.Free(handle);
+                return true;
+            }
+
+            return false;
+        }
 
         public void Free()
         {
             Native.ggml_backend_free(this);
         }
-
     }
 }

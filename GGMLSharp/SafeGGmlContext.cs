@@ -291,10 +291,12 @@ namespace GGMLSharp
 			return Native.ggml_new_graph_custom(this, size, grads);
 		}
 
-		public Structs.OptimizationResult Optimizer(Structs.OptimizerParameters @params, SafeGGmlTensor f)
+		public Structs.OptimizationResult Optimize(Structs.OptimizerParameters @params, SafeGGmlTensor f)
 		{
 			ThrowIfNotInitialized();
-			return Native.ggml_opt(this, @params, f);
+			var optContext = new SafeGGmlOptContext();
+			Native.ggml_opt_init(this, optContext, @params, 0);
+			return Native.ggml_opt_resume(this, optContext, f);
 		}
 
 		public static Structs.OptimizerParameters GetDefaultOptimizerParams(Structs.OptimizerType type)

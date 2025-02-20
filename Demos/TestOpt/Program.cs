@@ -39,7 +39,7 @@ namespace TestOpt
 
 			OptimizerParameters optParams = SafeGGmlContext.GetDefaultOptimizerParams(OptimizerType.ADAM);
 
-			ctx.Optimizer(optParams, e);
+			ctx.Optimize(optParams, e);
 
 			ge.Reset();
 

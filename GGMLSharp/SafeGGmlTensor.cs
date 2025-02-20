@@ -146,12 +146,12 @@ namespace GGMLSharp
 		public void SetData(float data, int ne0, int ne1 = 0, int ne2 = 0, int ne3 = 0)
 		{
 			ThrowIfNotInitialized();
-			Native.ggml_set_f32_nd(this, ne0, ne1, ne2, ne3, data);
+			NativeCpu.ggml_set_f32_nd(this, ne0, ne1, ne2, ne3, data);
 		}
 
 		public float GetFloat(int n0 = 0, int n1 = 0, int n2 = 0, int n3 = 0)
 		{
-			return Native.ggml_get_f32_nd(this, n0, n1, n2, n3);
+			return NativeCpu.ggml_get_f32_nd(this, n0, n1, n2, n3);
 		}
 
 		public float[] GetDataInFloats()

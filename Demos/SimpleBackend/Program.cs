@@ -107,6 +107,10 @@ namespace SimpleBackend
 			{
 				model.backend = SafeGGmlBackend.CudaInit(); // init device 0
 			}
+			else if (SafeGGmlBackend.HasVulkan)
+			{
+				model.backend = SafeGGmlBackend.VulkanInit(); // init device 0
+			}
 			else
 			{
 				model.backend = SafeGGmlBackend.CpuInit();
