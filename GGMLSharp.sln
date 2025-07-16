@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestOpt", "Demos\TestOpt\Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yolov3Tiny", "Demos\Yolov3Tiny\Yolov3Tiny.csproj", "{2F1AD71D-F846-4CB4-827B-507F8224318A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VRAMEstimatorDemo", "Demos\VRAMEstimatorDemo\VRAMEstimatorDemo.csproj", "{A5E5B0F0-7B1A-4E3E-9D4A-AA4A5F441859}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
